@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id          Int         @id @default(autoincrement())
+  displayName String
+  email       String      @unique
+  password    String
+  workspace   workspace[]
+}
+
+model unverifiedUser {
+  id          Int      @id @default(autoincrement())
+  displayName String
+  email       String   @unique
+  password    String
+  expiresAt   DateTime
+}
+
+model otp {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  otp        String
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  forgotPass Boolean  @default(false)
+}
+
+model workspace {
+  id            Int        @id @default(autoincrement())
+  workspaceName String
+  userId        Int?
+  todosId       Int
+  users         user?      @relation(fields: [userId], references: [id])
+  ToDoList      todoList[]
+}
+
+model todoList {
+  id          Int       @id @default(autoincrement())
+  workspace   Int
+  todoId      todo[]
+  workspaceId workspace @relation(fields: [workspace], references: [id])
+}
+
+model todo {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String
+  status      TodoStatus @default(PENDING)
+  toDoListId  Int?
+  ToDoList    todoList?  @relation(fields: [toDoListId], references: [id])
+}
+
+enum TodoStatus {
+  PENDING
+  PROGRESS
+  COMPLETED
+}
