@@ -34,11 +34,11 @@ model Workspace {
 }
 
 model UserWorkSpace {
-  id            Int       @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   userId        Int
   workspaceId   Int
-  userIdFK      User      @relation(fields: [userId], references: [id])
-  workspaceIdFK Workspace @relation(fields: [workspaceId], references: [id])
+  userIdFK      User?      @relation(fields: [userId], references: [id])
+  workspaceIdFK Workspace? @relation(fields: [workspaceId], references: [id])
 }
 
 model Todo {
@@ -47,7 +47,7 @@ model Todo {
   description String
   status      TodoStatus @default(PENDING)
   workspaceId Int
-  workspace   Workspace  @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
 }
 
 enum TodoStatus {

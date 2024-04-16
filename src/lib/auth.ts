@@ -3,6 +3,7 @@ import { sign, verify } from "jsonwebtoken";
 import Credentials from "next-auth/providers/credentials";
 import GithubCredentials from "next-auth/providers/github";
 import GoogleCredentials from "next-auth/providers/google";
+import { use } from "react";
 
 export function generateJWT(payload: any) {
   const SECRET_KEY = process.env.SECRET_KEY || "";
@@ -64,23 +65,19 @@ export const authOptions = {
         password: { label: "password", type: "password", placeholder: "" },
       },
       authorize: async (credentials: any): Promise<any> => {
-        try {
-          const user = await verifyUser(
-            credentials.email,
-            credentials.password
-          );
+        const { user } = await verifyUser(
+          credentials.email,
+          credentials.password
+        );
 
-          if (user.data !== null) {
-            return {
-              email: credentials.email,
-              password: credentials.password,
-            };
-          }
-
-          return null;
-        } catch (error) {
-          return null;
+        if (user !== null) {
+          return {
+            id: user.id,
+            email: user.email,
+          };
         }
+
+        return null;
       },
     }),
     GoogleCredentials({
@@ -96,16 +93,17 @@ export const authOptions = {
   callbacks: {
     jwt: async ({ token, user }: any) => {
       if (user) {
-        token.uid = user.id;
+        token.id = user.id;
+        token.token = user.token || "undefined";
+        token.displayName = user.displayName || "undefined";
       }
-
       return token;
     },
     session: async ({ session, token }: any) => {
-      if (session.user) {
-        session.user.id = token.uid;
+      if (session?.user) {
+        session.user.id = token.id;
+        session.user.displayName = token.displayName;
       }
-
       return session;
     },
   },

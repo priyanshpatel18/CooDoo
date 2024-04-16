@@ -1,4 +1,5 @@
 import prisma from "@/db";
+import { generateJWT } from "@/lib/auth";
 import { compare } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -46,11 +47,27 @@ export async function POST(request: NextRequest) {
         message: "Incorrect Password",
       });
     }
+    const token = generateJWT({
+      id: userExists.id,
+      email: userExists.email,
+    });
+    await prisma.user.update({
+      data: {
+        token: token,
+      },
+      where: {
+        id: userExists.id,
+      },
+    });
 
+    const userObject = {
+      id: userExists.id,
+      email: userExists.email,
+    };
     // Send Response
     return NextResponse.json({
       status: 200,
-      user: userExists,
+      user: userObject,
       message: "Login Successful",
     });
   } catch (error) {

@@ -6,7 +6,7 @@ import { ReactNode, useState } from "react";
 
 export default function Home(): ReactNode {
   const [name, setName] = useState<string>("");
-  const session = useSession();
+  const { data: session } = useSession();
 
   return (
     <div className="">
@@ -20,11 +20,12 @@ export default function Home(): ReactNode {
       />
       <button
         onClick={async () => {
+          // const userId = session?.user.id;
           const { data } = await axios.post("/api/workspace/create", {
             workspaceName: name,
+            userId: session?.user.id,
           });
           console.log(data);
-          // console.log(session.data?.user.id);
         }}
       >
         Create

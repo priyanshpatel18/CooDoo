@@ -1,27 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
-import { RegisterUserSchema } from "@/schema/user";
 import prisma from "@/db/index";
-import { cookies } from "next/headers";
 import { generateJWT } from "@/lib/auth";
-import { genSalt, hash } from "bcrypt";
 import axios from "axios";
+import { genSalt, hash } from "bcrypt";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const userSchema = z.object({
+  displayName: z.string(),
+  email: z.string().email(),
+  password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/),
+});
 
 export async function POST(request: NextRequest) {
-  await prisma.user.deleteMany();
   // Validate Request
   const requestBody = await request.json();
-  const validateData = RegisterUserSchema.parse(requestBody);
-  if (
-    !validateData.email ||
-    !validateData.password ||
-    !validateData.displayName
-  ) {
+  const { displayName, email, password } = userSchema.parse(requestBody);
+  if (!email || !password || !displayName) {
     return NextResponse.json({
       status: 400,
       message: "Invalid Credentials",
     });
   }
-  const { displayName, email, password } = validateData;
 
   // Check if User exists
   const userExists = await prisma.user.findUnique({
