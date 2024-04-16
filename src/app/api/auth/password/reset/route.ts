@@ -2,15 +2,16 @@ import prisma from "@/db";
 import { verifyJWT } from "@/lib/auth";
 import { genSalt, hash } from "bcrypt";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   // Validate Request
   const { password } = await request.json();
   if (!password || typeof password !== "string") {
-    return {
+    return NextResponse.json({
       message: "Invalid password",
       status: 400,
-    };
+    });
   }
 
   // Get Payload from the Token
@@ -22,10 +23,10 @@ export async function POST(request: Request) {
     !decodedToken.payload.email ||
     !decodedToken.payload.id
   ) {
-    return {
+    return NextResponse.json({
       message: "Invalid Token",
       status: 400,
-    };
+    });
   }
 
   // Decoded Email
@@ -37,10 +38,10 @@ export async function POST(request: Request) {
     },
   });
   if (!userExists) {
-    return {
+    return NextResponse.json({
       message: "User does not exist",
       status: 400,
-    };
+    });
   }
 
   // Update User if it exists
@@ -53,17 +54,17 @@ export async function POST(request: Request) {
     },
   });
   if (!updatedUser) {
-    return {
+    return NextResponse.json({
       message: "Something went wrong",
       status: 400,
-    };
+    });
   }
   // Delete Token after Successful Update
   cookies().delete("userDoc");
 
   // Send Response
-  return {
-    status: 200,
+  return NextResponse.json({
     message: "Password Reset Successfully",
-  };
+    status: 400,
+  });
 }

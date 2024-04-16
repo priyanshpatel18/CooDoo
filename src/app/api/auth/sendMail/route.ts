@@ -1,18 +1,10 @@
 import otpGenerator from "otp-generator";
 import prisma from "@/db/index";
 import sendOTP from "@/utils/nodemailer";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { email, forgotFlag } = await request.json();
-  if (!email || typeof email !== "string") {
-    return {
-      message: "Invalid email",
-      status: 400,
-    };
-  }
-
-  // Validate Email
   if (!email || typeof email !== "string") {
     return {
       message: "Invalid email",
@@ -39,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Save OTP
     if (mailResponse.accepted) {
-      const expiresAt = new Date(new Date().getTime() + 10 * 60 * 1000);
+      const expiresAt = new Date(new Date().getTime() + 5 * 60 * 1000);
 
       const newOTP = await prisma.otp.upsert({
         where: {
@@ -50,33 +42,36 @@ export async function POST(request: NextRequest) {
           otp,
           expiresAt,
           forgotPass: forgotFlag,
+          createdAt: new Date(),
         },
         update: {
           otp,
           expiresAt,
+          forgotPass: forgotFlag,
+          createdAt: new Date(),
         },
       });
       if (!newOTP) {
-        return {
+        return NextResponse.json({
           message: "Internal Server Error",
           status: 500,
-        };
+        });
       }
 
-      return {
+      return NextResponse.json({
         message: `OTP sent to ${email}`,
         status: 200,
-      };
+      });
     } else {
-      return {
+      return NextResponse.json({
         message: "Internal Server Error",
         status: 500,
-      };
+      });
     }
   } else {
-    return {
+    return NextResponse.json({
       message: "Internal Server Error",
       status: 500,
-    };
+    });
   }
 }

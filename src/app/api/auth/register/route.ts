@@ -7,6 +7,7 @@ import { genSalt, hash } from "bcrypt";
 import axios from "axios";
 
 export async function POST(request: NextRequest) {
+  await prisma.user.deleteMany();
   // Validate Request
   const requestBody = await request.json();
   const validateData = RegisterUserSchema.parse(requestBody);
@@ -36,12 +37,20 @@ export async function POST(request: NextRequest) {
   }
 
   // Create Unverified User
-  const unverifiedUser = await prisma.unverifiedUser.create({
-    data: {
+  const unverifiedUser = await prisma.unverifiedUser.upsert({
+    where: {
+      email,
+    },
+    create: {
       displayName,
       email,
       password: await hash(password, await genSalt(10)),
-      expiresAt: new Date(new Date().getTime() + 10 * 60 * 1000),
+      expiresAt: new Date(new Date().getTime() + 5 * 60 * 1000),
+    },
+    update: {
+      displayName,
+      password: await hash(password, await genSalt(10)),
+      expiresAt: new Date(new Date().getTime() + 5 * 60 * 1000),
     },
   });
   if (!unverifiedUser) {
@@ -52,9 +61,9 @@ export async function POST(request: NextRequest) {
   }
 
   // Send OTP to the mail
-  const { data } = await axios.post("/api/sendMail", {
+  const { data } = await axios.post("http://localhost:3000/api/auth/sendMail", {
     email: unverifiedUser.email,
-    forgotFlag: false
+    forgotFlag: false,
   });
   if (data.status !== 200) {
     return NextResponse.json({

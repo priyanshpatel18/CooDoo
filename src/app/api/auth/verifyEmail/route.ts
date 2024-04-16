@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/db/index";
+import { generateJWT, verifyJWT } from "@/lib/auth";
+import { signIn } from "next-auth/react";
 import { cookies } from "next/headers";
-import { verifyJWT } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   // Validate Request
-  const requestBody = await request.json();
-  const { otp } = requestBody;
+  const { otp } = await request.json();
   if (!otp || typeof otp !== "string") {
     return NextResponse.json({ status: 400, message: "Invalid OTP" });
   }
@@ -39,7 +39,9 @@ export async function POST(request: NextRequest) {
   if (otpDoc.expiresAt < new Date()) {
     return NextResponse.json({ status: 400, message: "OTP Expired" });
   }
+
   if (otpDoc.otp !== otp) {
+    console.log(otpDoc.otp === otp);
     return NextResponse.json({ status: 400, message: "Incorrect OTP" });
   }
 
@@ -56,18 +58,24 @@ export async function POST(request: NextRequest) {
         email,
       },
     });
-    if (!unverifiedUser || unverifiedUser.expiresAt > new Date()) {
+    if (!unverifiedUser || unverifiedUser.expiresAt < new Date()) {
       return NextResponse.json({
         status: 400,
         message: "OTP Expired",
       });
     }
 
-    await prisma.user.create({
+    const token = generateJWT({
+      email: unverifiedUser.email,
+      id: unverifiedUser.id,
+    });
+
+    const newUser = await prisma.user.create({
       data: {
         displayName: unverifiedUser.displayName,
         email: unverifiedUser.email,
         password: unverifiedUser.password,
+        token,
       },
     });
     await prisma.unverifiedUser.delete({
@@ -75,7 +83,24 @@ export async function POST(request: NextRequest) {
         email,
       },
     });
+    await prisma.otp.update({
+      where: {
+        email,
+      },
+      data: {
+        verified: true,
+      },
+    });
+
+    // Delete Cookies
     cookies().delete("userDoc");
+
+    await signIn("credentials", {
+      email: newUser.email,
+      password: newUser.password,
+      redirect: false,
+      callbackUrl: "/",
+    });
 
     return NextResponse.json({
       status: 200,

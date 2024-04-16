@@ -1,11 +1,8 @@
-import prisma from "@/db";
-import { LoginUserSchema } from "@/schema/user";
-import { compare } from "bcrypt";
+import axios from "axios";
 import { sign, verify } from "jsonwebtoken";
 import Credentials from "next-auth/providers/credentials";
 import GithubCredentials from "next-auth/providers/github";
 import GoogleCredentials from "next-auth/providers/google";
-import { cookies } from "next/headers";
 
 export function generateJWT(payload: any) {
   const SECRET_KEY = process.env.SECRET_KEY || "";
@@ -28,6 +25,36 @@ export function verifyJWT(token: string) {
   return { status: 200, payload: decodedToken.payload };
 }
 
+export async function verifyUser(email: string, password: string) {
+  const url = "http://localhost:3000/api/auth/login";
+
+  const headers = {
+    "Client-Service": process.env.APP_CLIENT_SERVICE || "",
+    "Auth-Key": process.env.APP_AUTH_KEY || "",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+
+  const body = new URLSearchParams();
+  body.append("email", email);
+  body.append("password", password);
+
+  try {
+    const { data } = await axios.post(url, body, { headers });
+    console.log(data);
+
+    if (data.status == 401) {
+      throw new Error(`HTTP error! Status: ${data.status}`);
+    }
+
+    return data as any;
+  } catch (error) {
+    console.error("Error validating user:", error);
+    return {
+      data: null,
+    };
+  }
+}
+
 export const authOptions = {
   providers: [
     Credentials({
@@ -36,44 +63,22 @@ export const authOptions = {
         email: { label: "email", type: "text", placeholder: "" },
         password: { label: "password", type: "password", placeholder: "" },
       },
-      authorize: async (credentials) => {
-        // Validate Request
-        const { email, password } = LoginUserSchema.parse(credentials);
-        if (!email || !password) {
-          return null;
-        }
-
+      authorize: async (credentials: any): Promise<any> => {
         try {
-          // Check if User exists
-          const userExists = await prisma.user.findFirst({
-            where: {
-              email,
-            },
-          });
-          if (!userExists) {
-            return null;
+          const user = await verifyUser(
+            credentials.email,
+            credentials.password
+          );
+
+          if (user.data !== null) {
+            return {
+              email: credentials.email,
+              password: credentials.password,
+            };
           }
 
-          // Compare Password
-          const passwordMatch = await compare(password, userExists.password);
-          if (!passwordMatch) {
-            return null;
-          }
-
-          // Generate JWT if credentials are valid
-          const token = generateJWT({
-            id: userExists.id.toString(),
-            email: userExists.email,
-          });
-          cookies().set("token", token);
-
-          // Return User
-          return {
-            id: userExists.id.toString(),
-            email: userExists.email,
-          };
+          return null;
         } catch (error) {
-          console.log(error);
           return null;
         }
       },
@@ -87,6 +92,23 @@ export const authOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
     }),
   ],
+  secret: process.env.SECRET_KEY || "SeCr3T",
+  callbacks: {
+    jwt: async ({ token, user }: any) => {
+      if (user) {
+        token.uid = user.id;
+      }
+
+      return token;
+    },
+    session: async ({ session, token }: any) => {
+      if (session.user) {
+        session.user.id = token.uid;
+      }
+
+      return session;
+    },
+  },
   pages: {
     signIn: "/login",
   },
