@@ -8,10 +8,10 @@ export async function POST(request: Request) {
   // Validate Request
   const { email } = await request.json();
   if (!email || typeof email !== "string") {
-    return {
+    return NextResponse.json({
       message: "Invalid email",
       status: 400,
-    };
+    });
   }
 
   // Check if User exists
