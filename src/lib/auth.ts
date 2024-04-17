@@ -27,7 +27,7 @@ export function verifyJWT(token: string) {
 }
 
 export async function verifyUser(email: string, password: string) {
-  const url = "http://localhost:3000/api/auth/login";
+  const url = `${process.env.NEXTAUTH_URL}/api/auth/login`;
 
   const headers = {
     "Client-Service": process.env.APP_CLIENT_SERVICE || "",

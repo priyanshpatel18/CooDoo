@@ -28,10 +28,13 @@ export async function POST(request: Request) {
   }
 
   // Send Mail and store the response
-  const { data } = await axios.post("http://localhost:3000/api/auth/sendMail", {
-    email: userExists.email,
-    forgotFlag: true,
-  });
+  const { data } = await axios.post(
+    `${process.env.NEXTAUTH_URL}/api/auth/sendMail`,
+    {
+      email: userExists.email,
+      forgotFlag: true,
+    }
+  );
   if (data.status !== 200) {
     return NextResponse.json({
       status: 400,

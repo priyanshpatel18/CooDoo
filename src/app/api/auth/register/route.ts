@@ -61,10 +61,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Send OTP to the mail
-  const { data } = await axios.post("http://localhost:3000/api/auth/sendMail", {
-    email: unverifiedUser.email,
-    forgotFlag: false,
-  });
+  const { data } = await axios.post(
+    `${process.env.NEXTAUTH_URL}/api/auth/sendMail`,
+    {
+      email: unverifiedUser.email,
+      forgotFlag: false,
+    }
+  );
   if (data.status !== 200) {
     return NextResponse.json({
       status: data.status,
