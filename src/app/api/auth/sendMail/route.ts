@@ -6,10 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   const { email, forgotFlag } = await request.json();
   if (!email || typeof email !== "string") {
-    return {
+    return NextResponse.json({
       message: "Invalid email",
       status: 400,
-    };
+    });
   }
 
   // Generate OTP
