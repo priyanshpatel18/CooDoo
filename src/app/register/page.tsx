@@ -1,8 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { signIn } from "next-auth/react";
-import React, { ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 
 export default function Login(): ReactNode {
   const [user, setUser] = useState({

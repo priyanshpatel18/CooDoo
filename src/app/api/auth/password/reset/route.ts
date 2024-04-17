@@ -2,9 +2,9 @@ import prisma from "@/db";
 import { verifyJWT } from "@/lib/auth";
 import { genSalt, hash } from "bcrypt";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   // Validate Request
   const { password } = await request.json();
   if (!password || typeof password !== "string") {
