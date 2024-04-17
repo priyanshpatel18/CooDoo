@@ -37,8 +37,8 @@ model UserWorkSpace {
   id            Int        @id @default(autoincrement())
   userId        Int
   workspaceId   Int
-  userIdFK      User?      @relation(fields: [userId], references: [id])
-  workspaceIdFK Workspace? @relation(fields: [workspaceId], references: [id])
+  userIdFK      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceIdFK Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model Todo {

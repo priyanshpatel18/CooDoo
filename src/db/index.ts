@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
-function singletonPrismaClient() {
+function prismaClientSingleton () {
   console.log("Prisma Created");
   return new PrismaClient();
 }
 
 declare global {
-  var prismaGlobal: undefined | ReturnType<typeof singletonPrismaClient>;
+  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton >;
 }
 
-const prisma = globalThis.prismaGlobal ?? singletonPrismaClient();
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
 export default prisma;
 

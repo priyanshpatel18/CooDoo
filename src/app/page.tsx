@@ -1,35 +1,42 @@
 "use client";
 
-import axios from "axios";
 import { useSession } from "next-auth/react";
-import { ReactNode, useState } from "react";
+import { getData } from "./actions/user";
+import { useEffect, useState } from "react";
+import Workspace from "@/components/Workspace";
+import axios from "axios";
 
-export default function Home(): ReactNode {
-  const [name, setName] = useState<string>("");
-  const { data: session } = useSession();
+interface Workspace {
+  id: number | undefined;
+  workspaceName: string | undefined;
+}
+
+interface UserData {
+  id: number | undefined;
+  displayName: string | undefined;
+  email: string | undefined;
+  workspaces: Workspace[] | undefined;
+}
+
+export default function Home() {
+  const [user, setUser] = useState<UserData | null>();
+
+  const session = useSession();
+  useEffect(() => {
+    (async function fetchData() {
+      const user = await getData(session.data?.user?.id);
+      setUser(user);
+    })();
+  }, [session.data?.user?.id]);
 
   return (
     <div className="">
       <h1 className="text-[#F2F2F2]">OOPS</h1>
-      <input
-        type="text"
-        placeholder="Create Workspace"
-        className="text-[#2F2F2F]"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <button
-        onClick={async () => {
-          // const userId = session?.user.id;
-          const { data } = await axios.post("/api/workspace/create", {
-            workspaceName: name,
-            userId: session?.user.id,
-          });
-          console.log(data);
-        }}
-      >
-        Create
-      </button>
+      {user?.workspaces?.map((workspace, index) => (
+        <div key={index}>
+          <Workspace name={workspace.workspaceName} id={workspace.id} />
+        </div>
+      ))}
     </div>
   );
 }
