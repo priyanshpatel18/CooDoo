@@ -19,6 +19,7 @@ import UserStore from "@/store/store";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 
 export default function Navbar(): ReactNode {
@@ -27,6 +28,7 @@ export default function Navbar(): ReactNode {
   const [showWorkspace, setShowWorkspace] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -79,10 +81,12 @@ export default function Navbar(): ReactNode {
           >
             <span className="text-[0.9rem]">Your Workspaces</span>
             {store.workspaces?.map((workspace) => (
-              <Link
-                href={`/workspace/${workspace.id}`}
+              <div
                 key={workspace.id}
-                onClick={() => setShowWorkspace(false)}
+                onClick={() => {
+                  router.push(`/workspace/${workspace.id}`);
+                  setShowWorkspace(!showWorkspace);
+                }}
               >
                 <DropdownMenuLabel className="text-[1.1rem] cursor-pointer flex gap-[5px] items-center hover:bg-[#DDD] rounded-[5px]">
                   <div className="text-[#2F2F2F] w-[2rem] h-[2rem] flex items-center justify-center rounded-[5px] uppercase font-bold bg-gradient-to-bl from-[rgb(126,242,287)] to-[rgb(26,142,187)]">
@@ -91,7 +95,7 @@ export default function Navbar(): ReactNode {
                   {workspace.workspaceName}
                   <DropdownMenuSeparator />
                 </DropdownMenuLabel>
-              </Link>
+              </div>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -102,7 +106,7 @@ export default function Navbar(): ReactNode {
             setWorkspaceName("");
           }}
         >
-          <PopoverTrigger className="bg-[#42B6E3] text-[#2F2F2F] px-[10px] py-[5px] rounded-[5px] uppercase font-bold">
+          <PopoverTrigger className="bg-[#42B6E3] text-[#2F2F2F] px-[5px] lg:px-[10px] py-[5px] rounded-[5px] uppercase font-bold">
             <span className="hidden lg:block">create</span>
             <span className="block lg:hidden">+</span>
           </PopoverTrigger>
