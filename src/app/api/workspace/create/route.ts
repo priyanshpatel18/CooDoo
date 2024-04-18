@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     // Return the created workspace
     return NextResponse.json({
       message: "Workspace Created",
-      data: createWorkspace,
+      workspace: createWorkspace,
       status: 200,
     });
   } catch (error) {

@@ -1,10 +1,11 @@
 "use server";
 
 import prisma from "@/db";
+import { UserData } from "@/store/store";
 
 export async function getData(userId: number | undefined) {
   if (!userId) {
-    return null;
+    return undefined;
   }
 
   const userData = await prisma.$transaction(async (prisma) => {
@@ -16,6 +17,9 @@ export async function getData(userId: number | undefined) {
         UserWorkspace: true,
       },
     });
+    if (!user) {
+      return undefined;
+    }
 
     const workspaces = await prisma.workspace.findMany({
       where: {
