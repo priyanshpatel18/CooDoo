@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${fontPoppins}`}>
+      <body className={`${fontPoppins} text-primary`}>
         <Providers>
           <Navbar />
           {children}

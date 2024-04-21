@@ -14,13 +14,11 @@ export default function Workspace({ params }: { params: { id: string } }) {
   );
 
   return (
-    <div>
+    <div className="h-[93vh] flex flex-col">
       <WorkspaceNav workspaceName={workspaceName} />
 
-      <DragDropContent />
-
-      <div className="w-full text-primary flex gap-[1rem]">
-        <div className=""></div>
+      <div className="flex flex-1">
+        <DragDropContent />
       </div>
     </div>
   );

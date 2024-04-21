@@ -12,7 +12,7 @@ export default function WorkspaceNav({ workspaceName }: IWorkspaceProps) {
   const [starredWS, setStarredWS] = useState(false);
 
   return (
-    <div className="bg-[#232332] p-[1rem] text-primary flex items-center gap-[1rem]">
+    <div className="bg-[#232332] h-[10vh] p-[1rem] text-primary flex items-center gap-[1rem]">
       <span className="text-[1.5rem] font-semibold hover:bg-[rgba(255,255,255,0.4)] rounded-[5px] px-[0.5rem] cursor-pointer">
         {workspaceName}
       </span>
