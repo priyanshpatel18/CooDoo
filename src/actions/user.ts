@@ -1,7 +1,6 @@
 "use server";
 
 import prisma from "@/db";
-import { UserData } from "@/store/store";
 
 export async function getData(userId: number | undefined) {
   if (!userId) {

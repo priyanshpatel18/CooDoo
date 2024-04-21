@@ -61,7 +61,7 @@ export default function Navbar(): ReactNode {
 
   return (
     <div
-      className={`h-[7vh] flex justify-between items-center text-[#F2F2F2] ${fontPoppins} px-[1rem] border-b-[1px] border-[#888]`}
+      className={`h-[7vh] flex justify-between items-center text-primary ${fontPoppins} px-[1rem]`}
     >
       <div className="flex items-center gap-[1rem] leading-[1rem] lg:leading-[1.5rem]">
         <Link
@@ -77,9 +77,9 @@ export default function Navbar(): ReactNode {
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className={`bg-[#F2F2F2] outline-none border-none p-[10px] text-[#2F2F2F] ${fontPoppins}`}
+            className={`bg-primary outline-none border-none p-[10px] text-primary-dark ${fontPoppins}`}
           >
-            <span className="text-[0.9rem]">Your Workspaces</span>
+            <span className="text-[0.8rem] lg:text-[0.9rem]">Your Workspaces</span>
             {store.workspaces?.map((workspace) => (
               <div
                 key={workspace.id}
@@ -88,8 +88,8 @@ export default function Navbar(): ReactNode {
                   setShowWorkspace(!showWorkspace);
                 }}
               >
-                <DropdownMenuLabel className="text-[1.1rem] cursor-pointer flex gap-[5px] items-center hover:bg-[#DDD] rounded-[5px]">
-                  <div className="text-[#2F2F2F] w-[2rem] h-[2rem] flex items-center justify-center rounded-[5px] uppercase font-bold bg-gradient-to-bl from-[rgb(126,242,287)] to-[rgb(26,142,187)]">
+                <DropdownMenuLabel className="text-[0.9rem] lg:text-[1.1rem] cursor-pointer flex gap-[5px] items-center hover:bg-[#DDD] rounded-[5px]">
+                  <div className="text-primary-dark w-[1.4rem] lg:w-[2rem] h-[1.4rem] lg:h-[2rem] flex items-center justify-center rounded-[5px] uppercase font-bold bg-gradient-to-bl from-[rgb(126,242,287)] to-[rgb(26,142,187)]">
                     {workspace.workspaceName.charAt(0)}
                   </div>
                   {workspace.workspaceName}
@@ -106,11 +106,11 @@ export default function Navbar(): ReactNode {
             setWorkspaceName("");
           }}
         >
-          <PopoverTrigger className="bg-[#42B6E3] text-[#2F2F2F] px-[5px] lg:px-[10px] py-[5px] rounded-[5px] uppercase font-bold">
+          <PopoverTrigger className="bg-blueBackground text-primary-dark px-[5px] lg:px-[10px] py-[5px] rounded-[5px] uppercase font-bold">
             <span className="hidden lg:block">create</span>
-            <span className="block lg:hidden">+</span>
+            <span className="block lg:hidden w-[1rem] h-[1rem]">+</span>
           </PopoverTrigger>
-          <PopoverContent className="bg-slate-900 text-[#F2F2F2] flex flex-col p-[1.5rem] w-full gap-[1rem]">
+          <PopoverContent className="bg-background text-primary flex flex-col p-[1.5rem] w-full gap-[1rem]">
             <div className="text-[1rem] lg:text-[1.5rem] font-bold">
               Let&lsquo;s build a Workspace
             </div>
@@ -131,7 +131,7 @@ export default function Navbar(): ReactNode {
                 />
               </label>
               <button
-                className="bg-[rgb(66,182,227)] text-[#2F2F2F] px-[10px] py-[5px] rounded-[5px] uppercase font-bold hover:bg-[rgb(26,142,187)]"
+                className="bg-[rgb(66,182,227)] text-primary-dark px-[10px] py-[5px] rounded-[5px] uppercase font-bold hover:bg-[rgb(26,142,187)]"
                 type="submit"
               >
                 <span className="font-semibold">Create</span>

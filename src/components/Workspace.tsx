@@ -24,8 +24,8 @@ export default function Workspace({ name, id }: IWorkspaceProps) {
         X
       </span>
 
-      <h1 className="text-[#2F2F2F]">{name}</h1>
-      <h1 className="text-[#2F2F2F]">{id}</h1>
+      <h1 className="text-primary-dark">{name}</h1>
+      <h1 className="text-primary-dark">{id}</h1>
       <input
         type="text"
         placeholder="Workspace Name"
