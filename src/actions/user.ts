@@ -28,11 +28,31 @@ export async function getData(userId: number | undefined) {
       },
     });
 
+    const todos = await prisma.todo.findMany({
+      where: {
+        workspaceId: {
+          in: workspaces?.map((ws) => ws.id),
+        },
+      },
+    });
+
+    const workspaceObject = workspaces.map((workspace) => {
+      const todosForWorkspace = todos.filter(
+        (todo) => todo.workspaceId === workspace.id
+      );
+
+      return {
+        id: workspace.id,
+        workspaceName: workspace.workspaceName,
+        todos: todosForWorkspace,
+      };
+    });
+
     return {
       id: user?.id,
       displayName: user?.displayName,
       email: user?.email,
-      workspaces: workspaces,
+      workspaces: workspaceObject,
     };
   });
 

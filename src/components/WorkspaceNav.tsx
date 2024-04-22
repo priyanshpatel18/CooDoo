@@ -3,6 +3,7 @@ import Image from "next/image";
 import addUser from "@/assets/addUser.png";
 import star from "@/assets/star.png";
 import starred from "@/assets/starred.png";
+import plus from "@/assets/plus.png";
 
 interface IWorkspaceProps {
   workspaceName: string;
@@ -40,6 +41,10 @@ export default function WorkspaceNav({ workspaceName }: IWorkspaceProps) {
       <button className="bg-[rgba(235,235,235,0.90)] p-[0.5rem] ml-[0.5rem] rounded-[5px] flex items-center gap-[5px] hover:bg-primary">
         <Image src={addUser} alt="addUser" className="w-[1.2rem] h-[1.2rem]" />
         <span className="text-primary-dark font-semibold">Share</span>
+      </button>
+      <button className="flex items-center text-primary gap-[0.5rem] justify-center bg-[rgb(35,35,50)] px-[1rem] py-[10px] rounded-sm hover:bg-[rgb(65,65,80)] select-none border-[1px] border-primary">
+        <Image src={plus} alt="plus" className="w-[1rem] h-[1rem]" />
+        <span>Add card</span>
       </button>
     </div>
   );

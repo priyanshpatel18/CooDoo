@@ -18,7 +18,7 @@ export default function Workspace({ params }: { params: { id: string } }) {
       <WorkspaceNav workspaceName={workspaceName} />
 
       <div className="flex flex-1">
-        <DragDropContent />
+        <DragDropContent workspace={workspace} />
       </div>
     </div>
   );

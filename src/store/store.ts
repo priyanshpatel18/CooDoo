@@ -1,8 +1,18 @@
 import { create } from "zustand";
 
+export interface Todo {
+  id: number;
+  title: string;
+  description: string | null;
+  status: string;
+  workspaceId: number;
+  bgColor?: string | null;
+}
+
 export interface Workspace {
   id: number;
   workspaceName: string;
+  todos: Todo[] | undefined;
 }
 
 export interface UserData {

@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Todo" ADD COLUMN     "bgColor" TEXT DEFAULT '#c377e0',
+ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "status" DROP DEFAULT;

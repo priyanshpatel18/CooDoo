@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   Draggable,
   DraggableProvided,
@@ -8,17 +8,15 @@ import {
 } from "react-beautiful-dnd";
 import edit from "@/assets/edit.png";
 import Image from "next/image";
-import plus from "@/assets/plus.png";
+import { Todo } from "@/store/store";
 
 interface IDroppableProps {
   droppableId: string;
-  columnName: string;
-  columnItems: any[];
+  columnItems: Todo[];
 }
 
 export default function DroppableBox({
   droppableId,
-  columnName,
   columnItems,
 }: IDroppableProps): ReactNode {
   return (
@@ -29,8 +27,12 @@ export default function DroppableBox({
           {...provided.droppableProps}
           className="flex flex-col w-full max-h-[75vh] gap-[1rem] overflow-y-auto"
         >
-          <h2 className="text-primary uppercase text-center text-[2rem]">
-            {columnName}
+          <h2 className="text-primary uppercase text-center text-[2rem] select-none">
+            {droppableId === "1"
+              ? "pending"
+              : droppableId === "2"
+              ? "progress"
+              : "completed"}
           </h2>
           <div className="overflow-y-auto">
             {columnItems.map((item, index) => (
@@ -48,7 +50,7 @@ export default function DroppableBox({
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       style={{
-                        backgroundColor: item.bg,
+                        backgroundColor: item.bgColor || "#c377e0",
                         transition: "transform 0.2s ease",
                         ...provided.draggableProps.style,
                         ...(snapshot.isDragging && {
@@ -58,7 +60,7 @@ export default function DroppableBox({
                       className="w-[16rem] h-[15rem] rounded-sm lg:rounded-lg cursor-pointer select-none m-[1rem] flex flex-col"
                     >
                       <span className="relative flex flex-1 w-full items-center justify-center text-[1.5rem]">
-                        {item.itemName}
+                        {item.title}
                         <Image
                           src={edit}
                           alt="edit"
@@ -66,7 +68,7 @@ export default function DroppableBox({
                         />
                       </span>
                       <div className="bg-background-foreground text-primary basis-[60%] rounded-b-sm lg:rounded-b-lg p-[1rem]">
-                        <span>title</span>
+                        <span>{item.description}</span>
                       </div>
                     </div>
                   )}
@@ -75,10 +77,6 @@ export default function DroppableBox({
             ))}
           </div>
           {/* {provided.placeholder} */}
-          <button className="w-full flex items-center text-primary gap-[1rem] justify-center bg-[rgb(35,35,50)] p-[10px] rounded-sm hover:bg-[rgb(65,65,80)]">
-            <Image src={plus} alt="plus" className="w-[1rem] h-[1rem]" />
-            <span>Add card</span>
-          </button>
         </div>
       )}
     </Droppable>

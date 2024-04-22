@@ -79,7 +79,9 @@ export default function Navbar(): ReactNode {
           <DropdownMenuContent
             className={`bg-primary outline-none border-none p-[10px] text-primary-dark ${fontPoppins}`}
           >
-            <span className="text-[0.8rem] lg:text-[0.9rem]">Your Workspaces</span>
+            <span className="text-[0.8rem] lg:text-[0.9rem]">
+              Your Workspaces
+            </span>
             {store.workspaces?.map((workspace) => (
               <div
                 key={workspace.id}

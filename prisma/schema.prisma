@@ -44,10 +44,11 @@ model UserWorkSpace {
 model Todo {
   id          Int        @id @default(autoincrement())
   title       String
-  description String
-  status      TodoStatus @default(PENDING)
+  description String?
+  status      TodoStatus
   workspaceId Int
   workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  bgColor     String?    @default("#c377e0")
 }
 
 enum TodoStatus {
